@@ -55,9 +55,7 @@
  *
  * TO BUILD/RUN:
  *    compile:
- *       $(CC) cairo_example.c -c `pkg-config --cflags cairo` -o cairo_example.o
- *    link:
- *       $(CC) cairo_example.o `pkg-config --libs cairo` -o cairo_example
+ *       $(CC) example.c `pkg-config --cflags --libs cairo xcb` -o example
  */
 
 #include <err.h>
@@ -67,7 +65,6 @@
 #include <unistd.h>
 
 #include <xcb/xcb.h>
-#include <xcb/xcb_icccm.h>
 #include <cairo/cairo.h>
 #include <cairo/cairo-xcb.h>
 
