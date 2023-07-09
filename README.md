@@ -148,7 +148,7 @@ while((event = xcb_wait_for_event(xcon)))
 
 This loop will stop, after we close our window.
 
-[tutorial_01_03_event_handling](tutorial_01_03_event_handling)
+[tutorial_01_03_event_handling.c](tutorial_01_03_event_handling.c)
 
 ## 1.4 Mouse Event
 
@@ -196,4 +196,4 @@ while(running && (event = xcb_wait_for_event(xcon)))
 
 Now we can close our window by clicking into it.
 
-[tutorial_01_04_mouse_event](tutorial_01_04_mouse_event)
+[tutorial_01_04_mouse_event.c](tutorial_01_04_mouse_event.c)
