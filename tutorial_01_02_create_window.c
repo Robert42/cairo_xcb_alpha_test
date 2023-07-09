@@ -20,11 +20,8 @@ int main(int, char**)
     xscreen = xscreen_iter.data;
   }
 
-  int x, y, w, h;
-  x = y = 16;
-  w = h = 256;
-
   xcb_drawable_t xwindow = xcb_generate_id(xcon);
+  int x=16, y=16, w=256, h=256;
   xcb_create_window(
     xcon, // connection
     xscreen->root_depth, // depth

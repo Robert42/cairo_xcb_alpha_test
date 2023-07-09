@@ -95,14 +95,13 @@ xcb_drawable_t xwindow = xcb_generate_id(xcon);
 This id alone has no effect, but we are now ale to craete the window itself telling it to use that id.
 
 ```c
-xcb_drawable_t xwindow = xcb_generate_id(xcon);
+int x=16, y=16, w=256, h=256;
 xcb_create_window(
   xcon, // connection
   xscreen->root_depth, // depth
   xwindow, // window is
   xscreen->root,
-  x, y,
-  w, h,
+  x, y, w, h,
   0,  // border width
   XCB_WINDOW_CLASS_INPUT_OUTPUT, // _class
   xscreen->root_visual,
