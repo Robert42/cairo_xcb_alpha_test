@@ -1,6 +1,6 @@
 #include <xcb/xcb.h>
 #include <err.h>
-#include <time.h>
+#include <unistd.h>
 
 int main(int, char**)
 {

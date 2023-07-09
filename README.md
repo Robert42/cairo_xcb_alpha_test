@@ -124,7 +124,7 @@ We need to send all instructions to the server
 xcb_flush(xcon);
 ```
 
-But we won't see anything, because the application will exit before anythong could've been shown. So we just add a `sleep` (don't forget to `#include <time.h>`)
+But we won't see anything, because the application will exit before anythong could've been shown. So we just add a `sleep` (don't forget to `#include <unistd.h>`)
 
 ```c
 sleep(2);
