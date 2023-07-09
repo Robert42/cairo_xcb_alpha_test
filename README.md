@@ -196,4 +196,4 @@ while(running && (event = xcb_wait_for_event(xcon)))
 
 Now we can close our window by clicking into it.
 
-[tutorial_01_03_event_handling](tutorial_01_03_event_handling)
+[tutorial_01_04_mouse_event](tutorial_01_04_mouse_event)
