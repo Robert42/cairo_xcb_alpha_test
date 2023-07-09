@@ -5,8 +5,8 @@
 
 all: example tutorial
 
-tutorial: tutorial_01.c
-	$(CC) tutorial_01.c `pkg-config --cflags --libs cairo xcb` -o bin/tutorial_01
+tutorial:
+	$(CC) tutorial_01_01_connection.c `pkg-config --cflags --libs cairo xcb` -o bin/tutorial_01_01_connection
 
 example: example.c
 	$(CC) example.c `pkg-config --cflags --libs cairo xcb` -o bin/example

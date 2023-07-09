@@ -1,6 +1,10 @@
 # cairo-xcb-alpha tutorial
 
-> This tutorial's source code is forked from https://github.com/ryanflannery/cairo_xcb_alpha_test
+> This tutorial's source code is forked from https://github.com/ryanflannery/cairo_xcb_alpha_test.
+
+| Info |
+| ---  |
+| Work in progess, not complete |
 
 If you want to write a gui application for linux, there are many options to choose: Gtk, Qt, librocket.
 If you want to draw the ui yourself, then there are also many options: cairo, blend2d, nanovg, vkvg, thorvg.
@@ -26,13 +30,22 @@ Let's create a connection to the X11 server:
 xcb_connection_t *xcon;
 
 xcon = xcb_connect(NULL, NULL);
-assert(!xcb_connection_has_error(xcon));
+if(xcb_connection_has_error(xcon))
+{
+  xcb_disconnect(xcon);
+  errx(-1, "Failed to establish connection to X");
+}
 
 // New code will come here
 
 xcb_disconnect(xcon);
 ```
 
-You will also need to `#include <xcb/xcb.h>` and `#include <assert.h>` for simple error testing. In a real application, you would of course need some proper error handling.
+You will also need to `#include <xcb/xcb.h>` and `#include <err.h>` for simple error handling. In a real application, you would of course need some proper error handling. For this tutorial, `errx` is enough and will print the message and immediately exit the application.
+
+It's noteworthy, that `xcb_connect` never returns `NULL`, not even when an error happens[^xcb_connect]. We need to use `xcb_connection_has_error` to find out, whether we successfully established a connection.
+
+
+[^xcb_connect]: https://web.archive.org/web/20230608232234/https://xcb.freedesktop.org/manual/group__XCB__Core__API.html#ga094470586356d1764e69c9a1882966c3
 
 
