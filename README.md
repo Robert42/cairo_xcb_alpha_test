@@ -18,7 +18,9 @@ On linux, this will be most likely X11 or Wayland.
 
 This tutorial serves an a small introduction into creating a transparent window with xcb and drawing with cairo into it.
 
-# Step 1: Create XCB Window
+# 1 Create XCB Window
+
+## 1.1 Connect to X11 server
 
 XCB is a thin wrapper over the X11 protocol.
 The X11 protocol is a client/server model, where the operating systems window manager is the server and your application the client.
