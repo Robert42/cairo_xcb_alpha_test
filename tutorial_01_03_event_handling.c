@@ -1,6 +1,6 @@
 #include <xcb/xcb.h>
 #include <err.h>
-#include <unistd.h>
+#include <stdlib.h>
 
 int main(int, char**)
 {
@@ -39,7 +39,11 @@ int main(int, char**)
 
   xcb_flush(xcon);
 
-  sleep(2);
+  xcb_generic_event_t* event;
+  while((event = xcb_wait_for_event(xcon)))
+  {
+    free(event);
+  }
 
   xcb_disconnect(xcon);
 }

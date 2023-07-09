@@ -1,6 +1,7 @@
 #include <xcb/xcb.h>
 #include <err.h>
-#include <unistd.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 int main(int, char**)
 {
@@ -22,6 +23,10 @@ int main(int, char**)
 
   xcb_drawable_t xwindow = xcb_generate_id(xcon);
   int x=16, y=16, w=256, h=256;
+  uint32_t value_mask = XCB_CW_EVENT_MASK;
+  uint32_t value_list[] = {
+    XCB_EVENT_MASK_BUTTON_PRESS
+  };
   xcb_create_window(
     xcon, // connection
     xscreen->root_depth, // depth
@@ -31,15 +36,26 @@ int main(int, char**)
     0,  // border width
     XCB_WINDOW_CLASS_INPUT_OUTPUT, // _class
     xscreen->root_visual,
-    0, // value_mask
-    NULL // value_list
+    value_mask,
+    value_list
   );
 
   xcb_map_window(xcon, xwindow);
 
   xcb_flush(xcon);
 
-  sleep(2);
+  xcb_generic_event_t* event;
+  bool running = true;
+  while(running && (event = xcb_wait_for_event(xcon)))
+  {
+    switch(event->response_type)
+    {
+    case XCB_BUTTON_PRESS:
+      running = false;
+      break;
+    }
+    free(event);
+  }
 
   xcb_disconnect(xcon);
 }

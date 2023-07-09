@@ -105,8 +105,8 @@ xcb_create_window(
   0,  // border width
   XCB_WINDOW_CLASS_INPUT_OUTPUT, // _class
   xscreen->root_visual,
-  0, // value mask
-  NULL // value list
+  0, // value_mask
+  NULL // value_list
 );
 ```
 
@@ -132,3 +132,68 @@ sleep(2);
 [tutorial_01_02_create_window.c](tutorial_01_02_create_window.c)
 
 [^xcb_map_window]: https://web.archive.org/web/20230226185624/https://xcb.freedesktop.org/manual/group__XCB____API.html#ga63b6126c8f732a339eff596202bcb5eb
+
+## 1.3 Event Handling
+
+Instead of freezig the program for two seconds, let's actually react to events.
+Let's simply replace our `sleep(2)` with an event loop and let's `#include <stdlib.h>` for `free`.
+
+```c
+xcb_generic_event_t* event;
+while((event = xcb_wait_for_event(xcon)))
+{
+  free(event);
+}
+```
+
+This loop will stop, after we close our window.
+
+[tutorial_01_03_event_handling](tutorial_01_03_event_handling)
+
+## 1.4 Mouse Event
+
+Let's also close our window when clicking on it.
+
+Remember our window call?
+We'v simple passed zero for the last two arguments, `value_mask` and `value_list`.
+This two arguments can be used to customize our window in multiple ways.
+In a way, those are optional arguments for `xcb_create_window`.
+With `value_mask` you or all optional arguments you want to pass in `value_list`, which is an array of `uint32_t` storing all values. The order is implicitely defined.
+
+In order to react to a mouse click, we need to tell X11 that we want to listen to the `XCB_EVENT_MASK_BUTTON_PRESS` event. So we simply add the optional argument `XCB_CW_EVENT_MASK` and set its value to `XCB_EVENT_MASK_BUTTON_PRESS`.
+Don't forget to actually pass those values to `xcb_create_window`.
+
+```c
+uint32_t value_mask = XCB_CW_EVENT_MASK;
+uint32_t value_list[] = {
+  XCB_EVENT_MASK_BUTTON_PRESS
+};
+xcb_create_window(
+  /*
+    ...
+  */
+  value_mask,
+  value_list
+);
+```
+
+Now we need to handle the mouse button click. For this, I simply added a switch statement for the `event->response_type` and a boolean flag `running` which I use to exit the main loop once the used clicked into the window. Don't forget to `#include <stdbool.h>` for `true` and `false`.
+
+```c
+xcb_generic_event_t* event;
+bool running = true;
+while(running && (event = xcb_wait_for_event(xcon)))
+{
+  switch(event->response_type)
+  {
+  case XCB_BUTTON_PRESS:
+    running = false;
+    break;
+  }
+  free(event);
+}
+```
+
+Now we can close our window by clicking into it.
+
+[tutorial_01_03_event_handling](tutorial_01_03_event_handling)
