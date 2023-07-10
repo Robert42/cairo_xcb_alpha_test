@@ -48,7 +48,7 @@ int main(int, char**)
   bool running = true;
   while(running && (event = xcb_wait_for_event(xcon)))
   {
-    switch(event->response_type)
+    switch(event->response_type & 0x7F)
     {
     case XCB_BUTTON_PRESS:
       running = false;

@@ -177,14 +177,17 @@ xcb_create_window(
 );
 ```
 
-Now we need to handle the mouse button click. For this, I simply added a switch statement for the `event->response_type` and a boolean flag `running` which I use to exit the main loop once the used clicked into the window. Don't forget to `#include <stdbool.h>` for `true` and `false`.
+Now we need to handle the mouse button click. For this, I simply added a switch statement for the `event->response_type` and a boolean flag `running` which I use to exit the main loop once the used clicked into the window.
+The `0x7F` mask ignores the most significant bit: As that bit is used to mark, whether the event was send by SendEvent[^most_significant_bit].
+
+Don't forget to `#include <stdbool.h>` for `true` and `false`.
 
 ```c
 xcb_generic_event_t* event;
 bool running = true;
 while(running && (event = xcb_wait_for_event(xcon)))
 {
-  switch(event->response_type)
+  switch(event->response_type & 0x7F)
   {
   case XCB_BUTTON_PRESS:
     running = false;
@@ -197,3 +200,5 @@ while(running && (event = xcb_wait_for_event(xcon)))
 Now we can close our window by clicking into it.
 
 [tutorial_01_04_mouse_event.c](tutorial_01_04_mouse_event.c)
+
+[^most_significant_bit]: https://web.archive.org/web/20230404170844/https://www.x.org/releases/current/doc/xproto/x11protocol.html#event_format
