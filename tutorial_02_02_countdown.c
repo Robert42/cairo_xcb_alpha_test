@@ -72,6 +72,11 @@ int main(int, char**)
       cairo_rectangle(cairo, 16, 16, 32, 32);
       cairo_fill(cairo);
 
+      cairo_set_font_size(cairo, 64);
+      cairo_move_to(cairo, w/2, h/2);
+      cairo_set_source_rgba(cairo, 1, 1, 1, 1);
+      cairo_show_text(cairo, "10");
+
       xcb_flush(xcon);
       break;
     }

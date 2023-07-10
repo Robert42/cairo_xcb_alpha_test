@@ -181,7 +181,7 @@ uint32_t value_list[] = {
 };
 xcb_create_window(
   /*
-    ...
+    [...]
   */
   value_mask,
   value_list
@@ -275,6 +275,7 @@ and draw a simple rectangle when we got an expose event (in the switch statement
     cairo_set_source_rgba(cairo, 1, 0.5, 0, 1);
     cairo_rectangle(cairo, 16, 16, 32, 32);
     cairo_fill(cairo);
+
     xcb_flush(xcon);
     break;
 ```
@@ -283,4 +284,32 @@ Final code in [tutorial_02_01_cairo_draw.c](tutorial_02_01_cairo_draw.c).
 Compile with
 ```sh
 gcc tutorial_02_01_cairo_draw.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_01_cairo_draw
+```
+
+## 2.2 draw a countdown
+
+Start simple by drawing some text close to the center
+
+```c
+  case XCB_EXPOSE:
+    /*
+      [... rectangle ...]
+    */
+
+    cairo_set_font_size(cairo, 64);
+    cairo_move_to(cairo, w/2, h/2);
+    cairo_set_source_rgba(cairo, 1, 1, 1, 1);
+    cairo_show_text(cairo, "10");
+
+    xcb_flush(xcon);
+    break;
+```
+
+For the countdown to actually work, we will need a timer.
+
+
+Final code in [tutorial_02_02_countdown.c](tutorial_02_02_countdown.c).
+Compile with
+```sh
+gcc tutorial_02_02_countdown.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_02_countdown
 ```
