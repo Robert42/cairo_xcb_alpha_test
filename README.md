@@ -70,7 +70,11 @@ It's noteworthy, that `xcb_connect` never returns `NULL`, not even when an error
 
 [^xcb_connect]: https://web.archive.org/web/20230608232234/https://xcb.freedesktop.org/manual/group__XCB__Core__API.html#ga094470586356d1764e69c9a1882966c3
 
-[tutorial_01_01_connection.c](tutorial_01_01_connection.c)
+Final code in [tutorial_01_01_connection.c](tutorial_01_01_connection.c).
+Compile with
+```sh
+gcc tutorial_01_01_connection.c `pkg-config --cflags --libs xcb` -o bin/tutorial_01_01_connection
+```
 
 ## 1.2 Create Window
 
@@ -129,7 +133,11 @@ But we won't see anything, because the application will exit before anythong cou
 sleep(2);
 ```
 
-[tutorial_01_02_create_window.c](tutorial_01_02_create_window.c)
+Final code in [tutorial_01_02_create_window.c](tutorial_01_02_create_window.c).
+Copmile with
+```sh
+gcc tutorial_01_02_create_window.c `pkg-config --cflags --libs xcb` -o bin/tutorial_01_02_create_window
+```
 
 [^xcb_map_window]: https://web.archive.org/web/20230226185624/https://xcb.freedesktop.org/manual/group__XCB____API.html#ga63b6126c8f732a339eff596202bcb5eb
 
@@ -148,7 +156,10 @@ while((event = xcb_wait_for_event(xcon)))
 
 This loop will stop, after we close our window.
 
-[tutorial_01_03_event_handling.c](tutorial_01_03_event_handling.c)
+Final code in [tutorial_01_03_event_handling.c](tutorial_01_03_event_handling.c).Compile with
+```sh
+gcc tutorial_01_03_event_handling.c `pkg-config --cflags --libs xcb` -o bin/tutorial_01_03_event_handling
+```
 
 ## 1.4 Mouse Event
 
@@ -199,6 +210,77 @@ while(running && (event = xcb_wait_for_event(xcon)))
 
 Now we can close our window by clicking into it.
 
-[tutorial_01_04_mouse_event.c](tutorial_01_04_mouse_event.c)
+Final code in [tutorial_01_04_mouse_event.c](tutorial_01_04_mouse_event.c).
+Compile with
+```sh
+gcc tutorial_01_04_mouse_event.c `pkg-config --cflags --libs xcb` -o bin/tutorial_01_04_mouse_event
+```
 
 [^most_significant_bit]: https://web.archive.org/web/20230404170844/https://www.x.org/releases/current/doc/xproto/x11protocol.html#event_format
+
+# 2 Cairo
+
+## 2.1 draw a rectangle
+
+Cairo is a vector graphics library popular on linux.
+It can use xcb directly as backend, by calling
+
+```c
+cairo_surface_t* cairo_surface = cairo_xcb_surface_create(
+  xcon, // connection
+  xwindow, // drawable
+  xvisual, // visual
+  w, h
+);
+cairo_t* cairo = cairo_create(cairo_surface);
+```
+before calling `xcb_map_window`.
+
+This won't compile, as we first need to `#include <cairo-xcb.h>` and get the visual to pass to cairo.
+
+Let's write a helper function for that
+```c
+xcb_visualtype_t* get_xvisual(xcb_screen_t *screen, uint8_t depth)
+{
+  xcb_depth_iterator_t i = xcb_screen_allowed_depths_iterator(screen);
+  for (; i.rem; xcb_depth_next(&i)) {
+    if (i.data->depth != depth)
+        continue;
+
+    xcb_visualtype_iterator_t vi;
+    vi = xcb_depth_visuals_iterator(i.data);
+    for (; vi.rem; xcb_visualtype_next(&vi)) {
+        return vi.data;
+    }
+  }
+
+  return NULL;
+}
+```
+and call it after setting `xscreen`;
+```c
+xcb_visualtype_t* xvisual = get_xvisual(xscreen, xscreen->root_depth);
+```
+
+Now all we need to do is to listen to the expose event by modifying our `value_list`
+```c
+uint32_t value_list[] = {
+  XCB_EVENT_MASK_EXPOSURE | XCB_EVENT_MASK_BUTTON_PRESS
+};
+```
+
+and draw a simple rectangle when we got an expose event (in the switch statement, where where we already handle the mouse button event)
+```c
+  case XCB_EXPOSE:
+    cairo_set_source_rgba(cairo, 1, 0.5, 0, 1);
+    cairo_rectangle(cairo, 16, 16, 32, 32);
+    cairo_fill(cairo);
+    xcb_flush(xcon);
+    break;
+```
+
+Final code in [tutorial_02_01_cairo_draw.c](tutorial_02_01_cairo_draw.c).
+Compile with
+```sh
+gcc tutorial_02_01_cairo_draw.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_01_cairo_draw
+```
