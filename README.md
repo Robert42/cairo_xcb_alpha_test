@@ -376,7 +376,7 @@ void handle_timeout(int)
 
 Now we need to draw that value
 ```c
-char countdown_text[4] = {};
+char countdown_text[3] = {};
 snprintf(countdown_text, sizeof(countdown_text), "%i", countdown);
 // ...
 cairo_show_text(cairo, countdown_text);

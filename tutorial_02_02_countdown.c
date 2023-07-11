@@ -78,7 +78,7 @@ int main(int, char**)
       running = false;
       break;
     case XCB_EXPOSE:
-      char countdown_text[4] = {};
+      char countdown_text[3] = {};
       snprintf(countdown_text, sizeof(countdown_text), "%i", countdown);
 
       // background
