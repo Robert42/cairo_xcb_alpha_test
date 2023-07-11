@@ -408,3 +408,64 @@ Compile with
 ```sh
 gcc tutorial_02_02_countdown.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_02_countdown
 ```
+
+## 2.3 Style
+
+Currently, we have an opaque orange rectangle and an opaque white countdown.
+The goal of this tutorial is to demonstrate some transparency.
+Se we need to make our rendering more interesting to demonstrate those aspects.
+
+Let's start by replacing the solid grey background with an opaque checkerboard, in some way as preview before later making the window actually transparent.
+
+## Checkerboard
+
+To draw the checkerboard, we create an image containing the checkreboard and then paint a patter of repeating that image.
+
+First, we craete the checkerboard pattern
+
+```c
+  // Important this buffer must stay valid as long as the pattern is used by cairo.
+  // Cairo won't copy this buffer and will instead reference this original.
+  uint8_t dark_tile = 0x66;
+  uint8_t light_tile = 0xaa;
+  const uint32_t checkerboard_data[] = {0x010101*dark_tile, 0x010101*light_tile, 0x010101*light_tile, 0x010101*dark_tile};
+  // create checkboard pattern
+  cairo_pattern_t* checkerboard = ({
+    // create image containing the tiles
+    cairo_surface_t* img = cairo_image_surface_create_for_data((char*)checkerboard_data, CAIRO_FORMAT_RGB24, 2, 2, 2*4);
+    // and create a patter showing this image
+    cairo_pattern_t* pattern = cairo_pattern_create_for_surface(img);
+    // repeated
+    cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
+    // and scaled up to 8x8 px tiles
+    cairo_matrix_t each_tile_8px;
+    cairo_matrix_init_scale(&each_tile_8px, 1./8, 1./8);
+    cairo_pattern_set_matrix(pattern, &each_tile_8px);
+    // while using nearest pixel interpolation
+    cairo_pattern_set_filter(pattern, CAIRO_FILTER_NEAREST);
+    pattern;
+  });
+```
+
+Then we can use this pattern as source of the background, instead of the old solid color
+```c
+cairo_set_source(cairo, checkerboard);
+```
+
+Now that we have a heterogeneus background, why not add some transparency?
+
+Let's start simple with a transparent rectangle
+```c
+// rectangle
+cairo_set_source_rgba(cairo, 1, 0.5, 0, 0.5);
+cairo_rectangle(cairo, 16, 16, 32, 32);
+cairo_fill(cairo);
+```
+
+
+
+Final code in [tutorial_02_03_style.c](tutorial_02_03_style.c).
+Compile with
+```sh
+gcc tutorial_02_03_style.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_03_style
+```
