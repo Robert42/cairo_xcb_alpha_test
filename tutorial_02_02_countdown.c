@@ -71,7 +71,7 @@ int main(int, char**)
   bool running = true;
   while(running && (event = xcb_wait_for_event(xcon)))
   {
-    running = countdown >= 0;
+    running = countdown > 0;
     switch(event->response_type & 0x7F)
     {
     case XCB_BUTTON_PRESS:

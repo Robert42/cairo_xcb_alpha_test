@@ -397,9 +397,11 @@ void handle_timeout(int)
 
 And exit our program, when the countdown reached negative numbers by adding
 ```c
-running = countdown >= 0;
+running = countdown > 0;
 ```
 somewhere in the main loop (I've put it right before the switch).
+
+Now we have a program, that shows a countdown for shutting itself down.
 
 Final code in [tutorial_02_02_countdown.c](tutorial_02_02_countdown.c).
 Compile with
