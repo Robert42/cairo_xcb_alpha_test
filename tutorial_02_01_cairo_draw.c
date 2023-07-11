@@ -1,6 +1,7 @@
 #include <xcb/xcb.h>
 #include <cairo-xcb.h>
 #include <err.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -68,6 +69,11 @@ int main(int, char**)
       running = false;
       break;
     case XCB_EXPOSE:
+      // background
+      cairo_set_source_rgba(cairo, 0.5, 0.5, 0.5, 1);
+      cairo_paint(cairo);
+
+      // rectangle
       cairo_set_source_rgba(cairo, 1, 0.5, 0, 1);
       cairo_rectangle(cairo, 16, 16, 32, 32);
       cairo_fill(cairo);

@@ -1,5 +1,6 @@
 #include <xcb/xcb.h>
 #include <err.h>
+#include <unistd.h>
 #include <stdlib.h>
 
 int main(int, char**)

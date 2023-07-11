@@ -272,6 +272,11 @@ uint32_t value_list[] = {
 and draw a simple rectangle when we got an expose event (in the switch statement, where where we already handle the mouse button event)
 ```c
   case XCB_EXPOSE:
+    // background
+    cairo_set_source_rgba(cairo, 0.5, 0.5, 0.5, 1);
+    cairo_paint(cairo);
+
+    // rectangle
     cairo_set_source_rgba(cairo, 1, 0.5, 0, 1);
     cairo_rectangle(cairo, 16, 16, 32, 32);
     cairo_fill(cairo);
@@ -287,6 +292,8 @@ gcc tutorial_02_01_cairo_draw.c `pkg-config --cflags --libs cairo-xcb` -o bin/tu
 ```
 
 ## 2.2 draw a countdown
+
+### Draw Text
 
 Start simple by drawing some text close to the center
 
@@ -305,8 +312,92 @@ Start simple by drawing some text close to the center
     break;
 ```
 
-For the countdown to actually work, we will need a timer.
+### Timer
 
+For the countdown to actually work, we will need a timer.
+For this tutorial we will use signals.
+By calling `alarm(1)` we can tell the operating system to send the `SIGALRM` signal after one second.
+So add asignal handler (don't forget to `#include <stdio.h>`)
+```c
+void handle_timeout(int)
+{
+  printf("TIMEOUT!\n");
+}
+```
+and right before the event loop, set our new function as the `SIGALRM` signal handler (don't forget to `#include <signal.h>`).
+```c
+if(signal(SIGALRM, handle_timeout) == SIG_ERR) errx(-1, "Cout not set up timer");
+```
+And after that, we can start our timer
+```c
+alarm(1);
+```
+Now when you start the program, after a second, you should see `TIMEOUT!` being printed to the console.
+
+### Redraw
+To redraw, we need to send the expose event ourselves from the timeout handler.
+Remember, how we are calling `free` int our event loop for every event?
+This also means, that we need to create our event using `malloc` or `calloc`.
+```c
+void handle_timeout(int)
+{
+  xcb_expose_event_t* event = (xcb_expose_event_t*)calloc(sizeof(xcb_expose_event_t), 1);
+  event->response_type = XCB_EXPOSE;
+  event->width = w;
+  event->height = h;
+  xcb_send_event(xcon, false, xwindow, XCB_EVENT_MASK_EXPOSURE, (char*)event);
+  xcb_flush(xcon);
+}
+```
+
+
+
+To do so, our timout handler needs the `xcon` `xwindow` and `w` and `h`.
+So lets make the `xcb_drawable_t xwindow` variable a global variable.
+```c
+const int x=16, y=16, w=256, h=256;
+xcb_connection_t *xcon = NULL;
+xcb_drawable_t xwindow = 0;
+```
+
+In order to see the countdown, let's add another global
+```c
+int countdown = 10;
+```
+
+and decrease it in our timeout handler before sending the event
+```c
+void handle_timeout(int)
+{
+  countdown--;
+  // ...
+}
+```
+
+Now we need to draw that value
+```c
+char countdown_text[4] = {};
+snprintf(countdown_text, sizeof(countdown_text), "%i", countdown);
+// ...
+cairo_show_text(cairo, countdown_text);
+```
+
+Awesome, now we see our countdown.
+Now all we need to do is the send another timeout in our timeout handler.
+```c
+void handle_timeout(int)
+{
+  countdown--;
+  alarm(1);
+  // ...
+}
+```
+
+And exit our program, when the countdown reached negative numbers by adding
+```c
+running = countdown >= 0;
+```
+somewhere in the main loop (I've put it right before the switch).
 
 Final code in [tutorial_02_02_countdown.c](tutorial_02_02_countdown.c).
 Compile with
