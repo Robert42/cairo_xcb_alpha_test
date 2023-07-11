@@ -87,7 +87,7 @@ int main(int, char**)
 
       // rectangle
       cairo_set_source_rgba(cairo, 1, 0.5, 0, 1);
-      cairo_rectangle(cairo, 16, 16, 32, 32);
+      cairo_rectangle(cairo, 21, 21, 71, 71);
       cairo_fill(cairo);
 
       cairo_set_font_size(cairo, 64);

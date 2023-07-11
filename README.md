@@ -278,7 +278,7 @@ and draw a simple rectangle when we got an expose event (in the switch statement
 
     // rectangle
     cairo_set_source_rgba(cairo, 1, 0.5, 0, 1);
-    cairo_rectangle(cairo, 16, 16, 32, 32);
+    cairo_rectangle(cairo, 21, 21, 71, 71);
     cairo_fill(cairo);
 
     xcb_flush(xcon);
@@ -450,7 +450,10 @@ First, we craete the checkerboard pattern
 Then we can use this pattern as source of the background, instead of the old solid color
 ```c
 cairo_set_source(cairo, checkerboard);
+cairo_paint(cairo);
 ```
+
+## transparent rectangle
 
 Now that we have a heterogeneus background, why not add some transparency?
 
@@ -458,11 +461,9 @@ Let's start simple with a transparent rectangle
 ```c
 // rectangle
 cairo_set_source_rgba(cairo, 1, 0.5, 0, 0.5);
-cairo_rectangle(cairo, 16, 16, 32, 32);
+cairo_rectangle(cairo, 21, 21, 71, 71);
 cairo_fill(cairo);
 ```
-
-
 
 Final code in [tutorial_02_03_style.c](tutorial_02_03_style.c).
 Compile with
