@@ -353,7 +353,7 @@ void handle_timeout(int)
 
 
 To do so, our timout handler needs the `xcon` `xwindow` and `w` and `h`.
-So lets make the `xcb_drawable_t xwindow` variable a global variable.
+So lets turn those variables into global variables.
 ```c
 const int x=16, y=16, w=256, h=256;
 xcb_connection_t *xcon = NULL;
@@ -381,6 +381,8 @@ snprintf(countdown_text, sizeof(countdown_text), "%i", countdown);
 // ...
 cairo_show_text(cairo, countdown_text);
 ```
+
+### Countdown and exit
 
 Awesome, now we see our countdown.
 Now all we need to do is the send another timeout in our timeout handler.
