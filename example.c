@@ -230,7 +230,7 @@ wm_hints()
       free(xatom_reply);
    }
 
-   // Window type "dock": keep above all other windows
+   // Window type "dock": no frames and keep above all other windows
    // https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598049680
 	xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
          xatoms[NET_WM_XINFO_TYPE], XCB_ATOM_ATOM, 32, 1,
@@ -243,11 +243,14 @@ wm_hints()
          &xatoms[NET_WM_STATE_STICKY]);
    
    // show on all desktops
+   // https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598055552
 	xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
          xatoms[NET_WM_DESKTOP], XCB_ATOM_CARDINAL, 32, 1,
          (const uint32_t []){ -1 } );
 
    // shrink the space, where other windows are shown (the area, other windows are maximized to)
+   // https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598002400
+   // https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598000320
    enum {
       left,           right,
       top,            bottom,
