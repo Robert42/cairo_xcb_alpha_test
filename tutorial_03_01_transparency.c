@@ -32,7 +32,8 @@ int main(int, char**)
     xscreen = xscreen_iter.data;
   }
 
-  xcb_visualtype_t* xvisual = get_xvisual(xscreen, xscreen->root_depth);
+  const uint8_t depth = xscreen->root_depth;
+  xcb_visualtype_t* xvisual = get_xvisual(xscreen, depth);
 
   xwindow = xcb_generate_id(xcon);
   uint32_t value_mask = XCB_CW_EVENT_MASK;
@@ -41,13 +42,13 @@ int main(int, char**)
   };
   xcb_create_window(
     xcon, // connection
-    xscreen->root_depth, // depth
+    depth,
     xwindow, // window is
     xscreen->root,
     x, y, w, h,
     0,  // border width
     XCB_WINDOW_CLASS_INPUT_OUTPUT, // _class
-    xscreen->root_visual,
+    xvisual->visual_id,
     value_mask,
     value_list
   );
@@ -142,7 +143,7 @@ xcb_visualtype_t* get_xvisual(xcb_screen_t *screen, uint8_t depth)
     }
   }
 
-  return NULL;
+  errx(-1, "No visual found");
 }
 
 
