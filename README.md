@@ -512,6 +512,62 @@ Now we're ready to start with the interesting part of the tutorial: drawing tran
 
 ## 3.1 Transparency
 
+From now on, I will make new features optional using a macro
+```c
+#define TRANSPARENCY 1
+```
+
+### Depth
+As we are drawing with an alpha channel, we need 32 bits instead of the `xscreen->root_depth`.
+```c
+#if TRANSPARENCY
+  const uint8_t depth = 32;
+#else
+  const uint8_t depth = xscreen->root_depth;
+#endif
+```
+
+But now, that we've changed the depth, [we also need to change the border pixel and colormap of our window](https://stackoverflow.com/questions/3645632/how-to-create-a-window-with-a-bit-depth-of-32) for our visual.
+
+```c
+  xcb_colormap_t colormap = xcb_generate_id(xcon);
+  xcb_create_colormap(xcon, XCB_COLORMAP_ALLOC_NONE, colormap, xscreen->root, xvisual->visual_id);
+
+  xwindow = xcb_generate_id(xcon);
+  uint32_t value_mask =
+#if TRANSPARENCY
+    XCB_CW_BORDER_PIXEL | XCB_CW_COLORMAP |
+#endif
+    XCB_CW_EVENT_MASK;
+  uint32_t value_list[] = {
+#if TRANSPARENCY
+    0,
+#endif
+    XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_EXPOSURE,
+#if TRANSPARENCY
+    colormap,
+#endif
+  };
+  xcb_create_window(
+    // ...
+```
+
+Now we would not see any change, because we draw an opaque checkerboard over everything behind the window.
+Instead of drawing the checkerboard, we need to clear the background
+```c
+#if TRANSPARENCY
+      // clear background
+      cairo_set_operator(cairo, CAIRO_OPERATOR_SOURCE); // overwrite everything in the buffer ...
+      cairo_set_source_rgba(cairo, 0, 0, 0, 0); // .. with transparent black
+      cairo_paint(cairo);
+      cairo_set_operator(cairo, CAIRO_OPERATOR_OVER); // Now wer're regulary drawing again
+#else
+      // opaque checkerboard background
+      cairo_set_source(cairo, checkerboard);
+      cairo_paint(cairo);
+#endif
+```
+
 Final code in [tutorial_03_01_transparency.c](tutorial_03_01_transparency.c).
 Compile with
 ```sh

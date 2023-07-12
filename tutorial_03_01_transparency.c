@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <signal.h>
 
+#define TRANSPARENCY 1
+
 const int x=16, y=16, w=256, h=256;
 xcb_connection_t *xcon = NULL;
 xcb_drawable_t xwindow = 0;
@@ -32,13 +34,30 @@ int main(int, char**)
     xscreen = xscreen_iter.data;
   }
 
+#if TRANSPARENCY
+  const uint8_t depth = 32;
+#else
   const uint8_t depth = xscreen->root_depth;
+#endif
   xcb_visualtype_t* xvisual = get_xvisual(xscreen, depth);
 
+  xcb_colormap_t colormap = xcb_generate_id(xcon);
+  xcb_create_colormap(xcon, XCB_COLORMAP_ALLOC_NONE, colormap, xscreen->root, xvisual->visual_id);
+
   xwindow = xcb_generate_id(xcon);
-  uint32_t value_mask = XCB_CW_EVENT_MASK;
+  uint32_t value_mask =
+#if TRANSPARENCY
+    XCB_CW_BORDER_PIXEL | XCB_CW_COLORMAP |
+#endif
+    XCB_CW_EVENT_MASK;
   uint32_t value_list[] = {
-    XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_EXPOSURE
+#if TRANSPARENCY
+    0,
+#endif
+    XCB_EVENT_MASK_BUTTON_PRESS | XCB_EVENT_MASK_EXPOSURE,
+#if TRANSPARENCY
+    colormap,
+#endif
   };
   xcb_create_window(
     xcon, // connection
@@ -106,9 +125,17 @@ int main(int, char**)
       char countdown_text[3] = {};
       snprintf(countdown_text, sizeof(countdown_text), "%i", countdown);
 
-      // background
+#if TRANSPARENCY
+      // clear background
+      cairo_set_operator(cairo, CAIRO_OPERATOR_SOURCE); // overwrite everything in the buffer ...
+      cairo_set_source_rgba(cairo, 0, 0, 0, 0); // .. with transparent black
+      cairo_paint(cairo);
+      cairo_set_operator(cairo, CAIRO_OPERATOR_OVER); // Now wer're regulary drawing again
+#else
+      // opaque checkerboard background
       cairo_set_source(cairo, checkerboard);
       cairo_paint(cairo);
+#endif
 
       // rectangle
       cairo_set_source_rgba(cairo, 1, 0.5, 0, 0.5);
