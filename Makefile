@@ -13,6 +13,7 @@ tutorial:
 	gcc tutorial_02_01_cairo_draw.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_01_cairo_draw
 	gcc tutorial_02_02_countdown.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_02_countdown
 	gcc tutorial_02_03_style.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_03_style
+	gcc tutorial_03_01_transparency.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_01_transparency
 
 example: example.c
 	gcc example.c `pkg-config --cflags --libs cairo xcb` -o bin/example

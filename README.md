@@ -474,3 +474,13 @@ gcc tutorial_02_03_style.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutoria
 ```
 
 # 3 Transparent Window
+
+Now we're ready to start with the interesting part of the tutorial: drawing transparent windows.
+
+## 3.1 Transparency
+
+Final code in [tutorial_03_01_transparency.c](tutorial_03_01_transparency.c).
+Compile with
+```sh
+gcc tutorial_03_01_transparency.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_01_transparency
+```
