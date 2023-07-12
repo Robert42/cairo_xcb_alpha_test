@@ -230,6 +230,24 @@ wm_hints()
       free(xatom_reply);
    }
 
+   // Window type "dock": keep above all other windows
+   // https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598049680
+	xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
+         xatoms[NET_WM_XINFO_TYPE], XCB_ATOM_ATOM, 32, 1,
+         &xatoms[NET_WM_XINFO_TYPE_DOCK]);
+   
+   // Fixed position on the screen, even during virtual screen scrolls
+   // https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598036400
+	xcb_change_property(xcon, XCB_PROP_MODE_APPEND, xwindow,
+         xatoms[NET_WM_STATE], XCB_ATOM_ATOM, 32, 2,
+         &xatoms[NET_WM_STATE_STICKY]);
+   
+   // show on all desktops
+	xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
+         xatoms[NET_WM_DESKTOP], XCB_ATOM_CARDINAL, 32, 1,
+         (const uint32_t []){ -1 } );
+
+   // shrink the space, where other windows are shown (the area, other windows are maximized to)
    enum {
       left,           right,
       top,            bottom,
@@ -244,15 +262,6 @@ wm_hints()
    struts[top_start_x] = x;
    struts[top_end_x] = x + w;
 
-	xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
-         xatoms[NET_WM_XINFO_TYPE], XCB_ATOM_ATOM, 32, 1,
-         &xatoms[NET_WM_XINFO_TYPE_DOCK]);
-	xcb_change_property(xcon, XCB_PROP_MODE_APPEND, xwindow,
-         xatoms[NET_WM_STATE], XCB_ATOM_ATOM, 32, 2,
-         &xatoms[NET_WM_STATE_STICKY]);
-	xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
-         xatoms[NET_WM_DESKTOP], XCB_ATOM_CARDINAL, 32, 1,
-         (const uint32_t []){ -1 } );
 	xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
          xatoms[NET_WM_STRUT_PARTIAL], XCB_ATOM_CARDINAL, 32, 12, struts);
 	xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
