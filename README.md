@@ -646,3 +646,21 @@ Compile with
 ```sh
 gcc tutorial_03_01_transparency.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_01_transparency
 ```
+
+### Dock on all Desktops
+
+Again, we add a macro for our feature
+```c
+#define SPLASHSCREEN 0
+#define DOCK 1
+
+#if SPLASHSCREEN && DOCK
+#error "please choose!"
+#endif
+```
+
+Final code in [tutorial_03_03_dock.c](tutorial_03_03_dock.c).
+Compile with
+```sh
+gcc tutorial_03_03_dock.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_03_dock
+```
