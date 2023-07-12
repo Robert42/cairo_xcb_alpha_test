@@ -151,10 +151,11 @@ void handle_timeout(int)
 {
   countdown--;
   alarm(1);
-  xcb_expose_event_t* event = (xcb_expose_event_t*)calloc(sizeof(xcb_expose_event_t), 1);
-  event->response_type = XCB_EXPOSE;
-  event->width = w;
-  event->height = h;
-  xcb_send_event(xcon, false, xwindow, XCB_EVENT_MASK_EXPOSURE, (char*)event);
+  xcb_expose_event_t event = {
+    .response_type = XCB_EXPOSE,
+    .width = w,
+    .height = h,
+  };
+  xcb_send_event(xcon, false, xwindow, XCB_EVENT_MASK_EXPOSURE, (char*)&event);
   xcb_flush(xcon);
 }

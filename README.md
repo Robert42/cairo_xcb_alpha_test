@@ -336,16 +336,15 @@ Now when you start the program, after a second, you should see `TIMEOUT!` being 
 
 ### Redraw
 To redraw, we need to send the expose event ourselves from the timeout handler.
-Remember, how we are calling `free` int our event loop for every event?
-This also means, that we need to create our event using `malloc` or `calloc`.
 ```c
 void handle_timeout(int)
 {
-  xcb_expose_event_t* event = (xcb_expose_event_t*)calloc(sizeof(xcb_expose_event_t), 1);
-  event->response_type = XCB_EXPOSE;
-  event->width = w;
-  event->height = h;
-  xcb_send_event(xcon, false, xwindow, XCB_EVENT_MASK_EXPOSURE, (char*)event);
+  xcb_expose_event_t event = {
+    .response_type = XCB_EXPOSE,
+    .width = w,
+    .height = h,
+  };
+  xcb_send_event(xcon, false, xwindow, XCB_EVENT_MASK_EXPOSURE, (char*)&event);
   xcb_flush(xcon);
 }
 ```
