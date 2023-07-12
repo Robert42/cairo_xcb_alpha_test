@@ -118,7 +118,7 @@ xcb_visualtype_t* get_xvisual(xcb_screen_t *screen, uint8_t depth)
     }
   }
 
-  return NULL;
+  errx(-1, "No visual found");
 }
 
 
