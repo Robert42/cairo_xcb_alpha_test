@@ -6,8 +6,11 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <signal.h>
+#include <string.h>
 
 #define TRANSPARENCY 1
+
+#define SPLASHSCREEN 1
 
 const int x=16, y=16, w=256, h=256;
 xcb_connection_t *xcon = NULL;
@@ -17,6 +20,8 @@ int countdown = 10;
 
 void handle_timeout(int);
 xcb_visualtype_t* get_xvisual(xcb_screen_t *screen, uint8_t depth);
+xcb_atom_t atom(const char* name);
+void set_property_uint32(xcb_atom_t prop_name, xcb_atom_t prop_type, uint32_t value);
 
 int main(int, char**)
 {
@@ -103,6 +108,9 @@ int main(int, char**)
     cairo_pattern_set_filter(pattern, CAIRO_FILTER_NEAREST);
     pattern;
   });
+#if SPLASHSCREEN
+  set_property_uint32(atom("_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, atom("_NET_WM_WINDOW_TYPE_SPLASH"));
+#endif
 
   xcb_map_window(xcon, xwindow);
 
@@ -185,4 +193,25 @@ void handle_timeout(int)
   };
   xcb_send_event(xcon, false, xwindow, XCB_EVENT_MASK_EXPOSURE, (char*)&event);
   xcb_flush(xcon);
+}
+
+xcb_atom_t atom(const char* name)
+{
+  xcb_intern_atom_cookie_t xcookie = xcb_intern_atom(xcon, 0, strlen(name), name);
+  xcb_intern_atom_reply_t* xatom_reply = xcb_intern_atom_reply(xcon, xcookie, NULL);
+  if(!xatom_reply)
+    errx(1, "xcb atom reply failed for %s", name);
+
+  xcb_atom_t atom = xatom_reply->atom;
+  free(xatom_reply);
+  return atom;
+}
+
+void set_property_uint32(xcb_atom_t prop_name, xcb_atom_t prop_type, uint32_t value)
+{
+  xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
+    prop_name,
+    prop_type,
+    32, 1, &value// list of 32 bit atoms with the length 1
+  );
 }

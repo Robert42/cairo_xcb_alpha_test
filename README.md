@@ -3,7 +3,7 @@
 > This tutorial's source code is forked from https://github.com/ryanflannery/cairo_xcb_alpha_test.
 > All rights of the original source code are reserved to the original author
 
-License for my (Robert Hidlebrandt) modifications and this tutorial:
+License for my (Robert Hildebrandt) modifications and this tutorial:
 ```
 Zero-Clause BSD
 =============
@@ -589,6 +589,58 @@ If you want the dock to appear on all desktops, you can set `_NET_WM_DESKTOP`[^_
 
 [^_NET_WM_WINDOW_TYPE]: https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598049680
 [^_NET_WM_DESKTOP]: https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598055552
+
+I'd say let's make it a splashscreen first, then extend it to be a dock on all desktops.
+
+### Splashscreen
+
+Add a macro to switch our new feature on/off
+
+```c
+#define SPLASHSCREEN 1
+```
+
+All of the desktop features I've mentioned are extension to X11 and thus aren't part of the core xcb api.
+We can set properties of windows, via a property name.
+The names are passed in form of atoms, which are 32 bit integers referencing a string.
+Here's a simple function to get the atom of a nullterminated string.
+```c
+xcb_atom_t atom(const char* name)
+{
+  xcb_intern_atom_cookie_t xcookie = xcb_intern_atom(xcon, 0, strlen(name), name);
+  xcb_intern_atom_reply_t* xatom_reply = xcb_intern_atom_reply(xcon, xcookie, NULL);
+  if(!xatom_reply)
+    errx(1, "xcb atom reply failed for %s", name);
+
+  xcb_atom_t atom = xatom_reply->atom;
+  free(xatom_reply);
+  return atom;
+}
+```
+Don't forget to `#include <string.h>`.
+This fnction is not the recommended way of getting the atom of a string, as we aren't exploiting xcb asynchronous model.
+Normally wou would call `xcb_intern_atom` do something else to give the server some time before calling `xcb_intern_atom_reply` and waiting for the answer to have arrived.
+But for this tutorial, I'll take the simpler but slower road.
+
+Also, let's add a helper function for setting window properties, that are a single `uint32_t` value. It accepts two atoms: The property name, property type and the 32 bit value
+```c
+void set_property_uint32(xcb_atom_t prop_name, xcb_atom_t prop_type, uint32_t value)
+{
+  xcb_change_property(xcon, XCB_PROP_MODE_REPLACE, xwindow,
+    prop_name,
+    prop_type,
+    32, 1, &value// list of 32 bit atoms with the length 1
+  );
+}
+```
+
+Now, telling the window manager, that the window is a splashscreen is as simple as setting the `_NET_WM_WINDOW_TYPE`[^_NET_WM_WINDOW_TYPE] property to `_NET_WM_WINDOW_TYPE_SPLASH`
+```c
+#if SPLASHSCREEN
+  set_property_uint32(atom("_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, atom("_NET_WM_WINDOW_TYPE_SPLASH"));
+#endif
+```
+
 Final code in [tutorial_03_01_transparency.c](tutorial_03_01_transparency.c).
 Compile with
 ```sh
