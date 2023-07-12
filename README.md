@@ -590,7 +590,7 @@ If you want the dock to appear on all desktops, you can set `_NET_WM_DESKTOP`[^_
 [^_NET_WM_WINDOW_TYPE]: https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598049680
 [^_NET_WM_DESKTOP]: https://web.archive.org/web/20230528202859/https://specifications.freedesktop.org/wm-spec/wm-spec-latest.html#idm45894598055552
 
-I'd say let's make it a splashscreen first, then extend it to be a dock on all desktops.
+I'd say let's make it a splashscreen first, then allow it to be a dock.
 
 ### Splashscreen
 
@@ -648,7 +648,7 @@ Compile with
 gcc tutorial_03_01_transparency.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_01_transparency
 ```
 
-### Dock on all Desktops
+### Dock
 
 Again, we add a macro for our feature
 ```c
