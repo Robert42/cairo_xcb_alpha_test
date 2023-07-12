@@ -62,8 +62,10 @@ int main(int, char**)
 
   // Important this buffer must stay valid as long as the pattern is used by cairo.
   // Cairo won't copy this buffer and will instead reference this original.
-  uint8_t dark_tile = 0x66;
-  uint8_t light_tile = 0xaa;
+  const uint8_t tile_brightness_center = 0xFF/2;
+  const uint8_t tile_brightness_offset = 0xFF/8;
+  const uint8_t dark_tile = tile_brightness_center - tile_brightness_offset;
+  const uint8_t light_tile = tile_brightness_center + tile_brightness_offset;
   const uint32_t checkerboard_data[] = {0x010101*dark_tile, 0x010101*light_tile, 0x010101*light_tile, 0x010101*dark_tile};
   // create checkboard pattern
   cairo_pattern_t* checkerboard = ({
