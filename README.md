@@ -490,7 +490,21 @@ We have a code duplication: `get_xvisual` and `xcb_create_window` both use the s
     // ...
 ```
 
-const uint8_t depth = xscreen->root_depth;
+Also, we are using the same visual type for our window as we do for cairo, so let's replace `xscreen->root_visual` in our `xcb_create_window` call with `xvisual->visual_id`
+```c
+  xcb_create_window(
+    // ...
+    xvisual->visual_id,
+    value_mask,
+    value_list
+  );
+```
+
+Final code in [tutorial_02_04_clean_up.c](tutorial_02_04_clean_up.c).
+Compile with
+```sh
+gcc tutorial_02_04_clean_up.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_04_clean_up
+```
 
 # 3 Transparent Window
 

@@ -48,7 +48,7 @@ int main(int, char**)
     x, y, w, h,
     0,  // border width
     XCB_WINDOW_CLASS_INPUT_OUTPUT, // _class
-    xscreen->root_visual,
+    xvisual->visual_id,
     value_mask,
     value_list
   );
