@@ -10,7 +10,12 @@
 
 #define TRANSPARENCY 1
 
-#define SPLASHSCREEN 1
+#define SPLASHSCREEN 0
+#define DOCK 1
+
+#if SPLASHSCREEN && DOCK
+#error "please choose!"
+#endif
 
 const int x=16, y=16, w=256, h=256;
 xcb_connection_t *xcon = NULL;
