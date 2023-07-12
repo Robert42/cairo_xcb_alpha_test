@@ -575,7 +575,7 @@ Compile with
 gcc tutorial_03_01_transparency.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_01_transparency
 ```
 
-## 3.2 Make it a splashscreen xor a dock on all desktops
+## 3.2 Make it a splashscreen xor a dock
 
 The window is transparent, but it still has a border. If that's what you want, great!
 But you may have other plans.
