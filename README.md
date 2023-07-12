@@ -527,6 +527,7 @@ As we are drawing with an alpha channel, we need 32 bits instead of the `xscreen
 #endif
 ```
 
+### Borderpixel & Colormap
 But now, that we've changed the depth, [we also need to change the border pixel and colormap of our window](https://stackoverflow.com/questions/3645632/how-to-create-a-window-with-a-bit-depth-of-32) for our visual.
 
 ```c
@@ -552,6 +553,7 @@ But now, that we've changed the depth, [we also need to change the border pixel 
     // ...
 ```
 
+### Clear Buffer
 Now we would not see any change, because we draw an opaque checkerboard over everything behind the window.
 Instead of drawing the checkerboard, we need to clear the background
 ```c
