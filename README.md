@@ -473,6 +473,25 @@ Compile with
 gcc tutorial_02_03_style.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_03_style
 ```
 
+# 2.4 Clean up
+
+Now that our rendering is working, but we can clean our code up a little.
+
+We have a code duplication: `get_xvisual` and `xcb_create_window` both use the same depth `xscreen->root_depth`, so why not store it in one variable?
+```c
+  const uint8_t depth = xscreen->root_depth;
+  xcb_visualtype_t* xvisual = get_xvisual(xscreen, depth);
+
+  // ...
+
+  xcb_create_window(
+    xcon, // connection
+    depth,
+    // ...
+```
+
+const uint8_t depth = xscreen->root_depth;
+
 # 3 Transparent Window
 
 Now we're ready to start with the interesting part of the tutorial: drawing transparent windows.
