@@ -640,6 +640,7 @@ Now, telling the window manager, that the window is a splashscreen is as simple 
   set_property_uint32(atom("_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, atom("_NET_WM_WINDOW_TYPE_SPLASH"));
 #endif
 ```
+(I've put this lines before `xcb_map_window`)
 
 Final code in [tutorial_03_01_transparency.c](tutorial_03_01_transparency.c).
 Compile with
@@ -656,6 +657,13 @@ Again, we add a macro for our feature
 
 #if SPLASHSCREEN && DOCK
 #error "please choose!"
+#endif
+```
+
+Now, telling the window manager, that the window is a dock is as simple as setting the `_NET_WM_WINDOW_TYPE`[^_NET_WM_WINDOW_TYPE] property to `_NET_WM_WINDOW_TYPE_DOCK`
+```c
+#if DOCK
+  set_property_uint32(atom("_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, atom("_NET_WM_WINDOW_TYPE_DOCK"));
 #endif
 ```
 

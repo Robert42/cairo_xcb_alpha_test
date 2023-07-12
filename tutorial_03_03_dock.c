@@ -111,6 +111,9 @@ int main(int, char**)
 #if SPLASHSCREEN
   set_property_uint32(atom("_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, atom("_NET_WM_WINDOW_TYPE_SPLASH"));
 #endif
+#if DOCK
+  set_property_uint32(atom("_NET_WM_WINDOW_TYPE"), XCB_ATOM_ATOM, atom("_NET_WM_WINDOW_TYPE_DOCK"));
+#endif
 
   xcb_map_window(xcon, xwindow);
 
