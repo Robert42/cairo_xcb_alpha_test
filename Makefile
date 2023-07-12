@@ -15,6 +15,7 @@ tutorial:
 	gcc tutorial_02_03_style.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_03_style
 	gcc tutorial_02_04_clean_up.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_02_04_clean_up
 	gcc tutorial_03_01_transparency.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_01_transparency
+	gcc tutorial_03_02_window_type.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_02_window_type
 
 example: example.c
 	gcc example.c `pkg-config --cflags --libs cairo xcb` -o bin/example
