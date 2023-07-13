@@ -3,7 +3,7 @@
 > This tutorial's source code is forked from https://github.com/ryanflannery/cairo_xcb_alpha_test.
 > All rights of the original source code are reserved to the original author
 
-License for my (Robert Hildebrandt) modifications and this tutorial:
+License for my (Robert Hildebrandt) modifications:
 ```
 Zero-Clause BSD
 =============
