@@ -27,10 +27,10 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 If you want to write a gui application for linux, there are many options to choose: Gtk, Qt, [and many more](https://orangehattech.com/cgui).
 If you want to draw the ui yourself, then there are also many options: cairo, blend2d, nanovg, vkvg, thorvg.
 For each of these, you will need to tell the operating systems what to open a window for you.
-There are some libraries that will do that for you (and even initialize OpenGL for you): glfw, sdl2, sfml.
+There are some libraries that will do that for you (and even initialize OpenGL context for you): glfw, sdl2, sfml.
 
-But every of this libraries is putting an abstraction layer between you and the operating system.
-For some effects those libraries weren't made for, you will need to takl directly with the window system -- this libraries have ways to give you pointers/handle to windows to talk directly with the window manager.
+But every one of this libraries is putting an abstraction layer between you and the operating system.
+For some effects that those libraries weren't made for, you will need to talk directly with the window management system -- this libraries have ways to give you pointers/handle to windows to talk directly with the window manager.
 
 On linux, this will be most likely X11 or Wayland.
 
