@@ -132,7 +132,7 @@ sleep(2);
 ```
 
 Final code in [tutorial_01_02_create_window.c](tutorial_01_02_create_window.c).
-Copmile with
+Compile with
 ```sh
 gcc tutorial_01_02_create_window.c `pkg-config --cflags --libs xcb` -o bin/tutorial_01_02_create_window
 ```
@@ -167,7 +167,7 @@ Remember our window call?
 We'v simple passed zero for the last two arguments, `value_mask` and `value_list`.
 This two arguments can be used to customize our window in multiple ways.
 In a way, those are optional arguments for `xcb_create_window`.
-With `value_mask` you or all optional arguments you want to pass in `value_list`, which is an array of `uint32_t` storing all values. The order is implicitely defined.
+With `value_mask` you "bitwise-or" all optional arguments you want to pass in `value_list`, which is an array of `uint32_t` storing all values. The order is implicitely defined by the value of the bits.
 
 In order to react to a mouse click, we need to tell X11 that we want to listen to the `XCB_EVENT_MASK_BUTTON_PRESS` event. So we simply add the optional argument `XCB_CW_EVENT_MASK` and set its value to `XCB_EVENT_MASK_BUTTON_PRESS`.
 Don't forget to actually pass those values to `xcb_create_window`.
@@ -187,7 +187,7 @@ xcb_create_window(
 ```
 
 Now we need to handle the mouse button click. For this, I simply added a switch statement for the `event->response_type` and a boolean flag `running` which I use to exit the main loop once the used clicked into the window.
-The `0x7F` mask ignores the most significant bit: As that bit is used to mark, whether the event was send by SendEvent[^most_significant_bit].
+The `0x7F` mask ignores the most significant bit: That bit is used to mark whether the event was send by SendEvent[^most_significant_bit].
 
 Don't forget to `#include <stdbool.h>` for `true` and `false`.
 
