@@ -22,9 +22,7 @@ OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 ```
 **Note that this license is only for my modifications and not the original code.**
 
-| Info |
-| ---  |
-| Work in progess, not complete |
+# Introduction
 
 If you want to write a gui application for linux, there are many options to choose: Gtk, Qt, librocket.
 If you want to draw the ui yourself, then there are also many options: cairo, blend2d, nanovg, vkvg, thorvg.
