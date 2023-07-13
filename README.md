@@ -164,10 +164,10 @@ gcc tutorial_01_03_event_handling.c `pkg-config --cflags --libs xcb` -o bin/tuto
 Let's also close our window when clicking on it.
 
 Remember our window call?
-We'v simple passed zero for the last two arguments, `value_mask` and `value_list`.
+We've simple passed zero for the last two arguments, `value_mask` and `value_list`.
 This two arguments can be used to customize our window in multiple ways.
 In a way, those are optional arguments for `xcb_create_window`.
-With `value_mask` you "bitwise-or" all optional arguments you want to pass in `value_list`, which is an array of `uint32_t` storing all values. The order is implicitely defined by the value of the bits.
+With `value_mask` you "bitwise-or" all optional arguments you want to pass in `value_list`, which is an array of `uint32_t` storing all values. The order is implicitly defined by the value of the bits.
 
 In order to react to a mouse click, we need to tell X11 that we want to listen to the `XCB_EVENT_MASK_BUTTON_PRESS` event. So we simply add the optional argument `XCB_CW_EVENT_MASK` and set its value to `XCB_EVENT_MASK_BUTTON_PRESS`.
 Don't forget to actually pass those values to `xcb_create_window`.
@@ -187,7 +187,7 @@ xcb_create_window(
 ```
 
 Now we need to handle the mouse button click. For this, I simply added a switch statement for the `event->response_type` and a boolean flag `running` which I use to exit the main loop once the used clicked into the window.
-The `0x7F` mask ignores the most significant bit: That bit is used to mark whether the event was send by SendEvent[^most_significant_bit].
+The `0x7F` mask ignores the most significant bit: That bit is used to mark whether the event was send by `SendEvent`[^most_significant_bit].
 
 Don't forget to `#include <stdbool.h>` for `true` and `false`.
 
@@ -221,7 +221,7 @@ gcc tutorial_01_04_mouse_event.c `pkg-config --cflags --libs xcb` -o bin/tutoria
 ## 2.1 draw a rectangle
 
 Cairo is a vector graphics library popular on linux.
-It can use xcb directly as backend, by calling
+It can use xcb directly as backend by calling
 
 ```c
 cairo_surface_t* cairo_surface = cairo_xcb_surface_create(
@@ -315,14 +315,14 @@ Start simple by drawing some text close to the center
 For the countdown to actually work, we will need a timer.
 For this tutorial we will use signals.
 By calling `alarm(1)` we can tell the operating system to send the `SIGALRM` signal after one second.
-So add asignal handler (don't forget to `#include <stdio.h>`)
+So add a signal handler (don't forget to `#include <stdio.h>`).
 ```c
 void handle_timeout(int)
 {
   printf("TIMEOUT!\n");
 }
 ```
-and right before the event loop, set our new function as the `SIGALRM` signal handler (don't forget to `#include <signal.h>`).
+Right before the event loop, set our new function as the `SIGALRM` signal handler (don't forget to `#include <signal.h>`).
 ```c
 if(signal(SIGALRM, handle_timeout) == SIG_ERR) errx(-1, "Cout not set up timer");
 ```
@@ -333,7 +333,7 @@ alarm(1);
 Now when you start the program, after a second, you should see `TIMEOUT!` being printed to the console.
 
 ### Redraw
-To redraw, we need to send the expose event ourselves from the timeout handler.
+To redraw, we need to send the expose event from the timeout handler.
 ```c
 void handle_timeout(int)
 {
@@ -349,7 +349,7 @@ void handle_timeout(int)
 
 
 
-To do so, our timout handler needs the `xcon` `xwindow` and `w` and `h`.
+To do so, our timout handler needs the `xcon` `xwindow` and `w` and `h` variables.
 So lets turn those variables into global variables.
 ```c
 const int x=16, y=16, w=256, h=256;
@@ -382,7 +382,7 @@ cairo_show_text(cairo, countdown_text);
 ### Countdown and exit
 
 Awesome, now we see our countdown.
-Now all we need to do is the send another timeout in our timeout handler.
+Now all we need to do is to continue the countdown by sending another timeout in our timeout handler.
 ```c
 void handle_timeout(int)
 {
@@ -392,7 +392,7 @@ void handle_timeout(int)
 }
 ```
 
-And exit our program, when the countdown reached negative numbers by adding
+Let's exit our program, when the countdown reached negative numbers by adding
 ```c
 running = countdown > 0;
 ```
@@ -410,15 +410,15 @@ gcc tutorial_02_02_countdown.c `pkg-config --cflags --libs cairo-xcb` -o bin/tut
 
 Currently, we have an opaque orange rectangle and an opaque white countdown.
 The goal of this tutorial is to demonstrate some transparency.
-Se we need to make our rendering more interesting to demonstrate those aspects.
+So we need to make our rendering more interesting to demonstrate those aspects.
 
 Let's start by replacing the solid grey background with an opaque checkerboard, in some way as preview before later making the window actually transparent.
 
 ## Checkerboard
 
-To draw the checkerboard, we create an image containing the checkreboard and then paint a patter of repeating that image.
+To draw the checkerboard, we create an image containing the checkerboard and then paint a pattern of repeating that image.
 
-First, we craete the checkerboard pattern
+First, we create the checkerboard pattern
 
 ```c
   // Important this buffer must stay valid as long as the pattern is used by cairo.
@@ -456,7 +456,7 @@ cairo_paint(cairo);
 
 Now that we have a heterogeneus background, why not add some transparency?
 
-Let's start simple with a transparent rectangle
+Let's make our rectangle transparent
 ```c
 // rectangle
 cairo_set_source_rgba(cairo, 1, 0.5, 0, 0.5);
@@ -487,7 +487,7 @@ We have a code duplication: `get_xvisual` and `xcb_create_window` both use the s
     // ...
 ```
 
-Also, we are using the same visual type for our window as we do for cairo, so let's replace `xscreen->root_visual` in our `xcb_create_window` call with `xvisual->visual_id`
+Also, we should be using the same visual type for our window as we do for cairo, so let's replace `xscreen->root_visual` in our `xcb_create_window` call with `xvisual->visual_id`
 ```c
   xcb_create_window(
     // ...
@@ -616,7 +616,7 @@ xcb_atom_t atom(const char* name)
 }
 ```
 Don't forget to `#include <string.h>`.
-This fnction is not the recommended way of getting the atom of a string, as we aren't exploiting xcb asynchronous model.
+This function is not the recommended way of getting the atom for a string, as we aren't exploiting xcb's asynchronous model.
 Normally wou would call `xcb_intern_atom` do something else to give the server some time before calling `xcb_intern_atom_reply` and waiting for the answer to have arrived.
 But for this tutorial, I'll take the simpler but slower road.
 
@@ -670,3 +670,4 @@ Compile with
 ```sh
 gcc tutorial_03_03_dock.c `pkg-config --cflags --libs cairo-xcb` -o bin/tutorial_03_03_dock
 ```
+
